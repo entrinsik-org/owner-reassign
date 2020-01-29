@@ -12,7 +12,7 @@ Reassigns owner to reports, based on csv file downloaded from Informer 4. Users 
 
 <code>select r.id, r.owner_sid as username from Report r inner join Mapping m on r.mapping_Id = m.id where m.datasource_id = <<Enter Datasource Id [Numeric]>> OR r.datasource_id = <<Enter Datasource Id [Numeric]>></code>
 
-3. Export this to csv. The filename must end with the extension ".orf" (you can changethat after download.
+3. Export this to csv. The filename must end with the extension ".orf" (you can change that after downloading).
 
 4. Drag this file onto Informer 5.
 
