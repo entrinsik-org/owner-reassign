@@ -1,0 +1,23 @@
+{
+  "name": "@entrinsik/informer-owner-reassign",
+  "version": "1.0.0",
+  "description": "Takes a csv with I4 report ids and usernames and assigns owners to imported I4 reports",
+  "main": "index.js",
+  "inf-version": "~5.1.x",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/entrinsik-org/owner-reassign.git"
+  },
+  "keywords": [
+    "migration"
+  ],
+  "author": "Andrew Morovati",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/entrinsik-org/owner-reassign/issues"
+  },
+  "homepage": "https://github.com/entrinsik-org/owner-reassign#readme"
+}

@@ -1,0 +1,14 @@
+<div class="bottom-padded">Assign all reports with IDs listed in the uploaded file <em>{{ ctrl.fileCtrl.$file.name }}</em>.</div>
+<div ng-if="ctrl.domains.length > 0">
+    <inf-input help="Checking this will import users from the selected domain. Unchecking this will only reassign report owners if the users are already in the system.">
+        <md-checkbox ng-model="ctrl.createUsers">
+            Create users associated with the reports.
+        </md-checkbox>
+    </inf-input>
+    <inf-input>
+        <md-select ng-model="ctrl.domain" placeholder="Domain" ng-required="ctrl.createUsers" ng-disabled="!ctrl.createUsers">
+            <md-option ng-repeat="domain in ::ctrl.domains" ng-value="domain">{{ ::domain.name || domain.id }}
+            </md-option>
+        </md-select>
+    </inf-input>
+</div>
