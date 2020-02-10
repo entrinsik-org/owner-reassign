@@ -1,6 +1,6 @@
 {
   "name": "@entrinsik/informer-owner-reassign",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Takes a csv with I4 report ids and usernames and assigns owners to imported I4 reports",
   "main": "index.js",
   "inf-version": "~5.1.x",

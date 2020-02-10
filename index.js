@@ -40,41 +40,46 @@ const createPrincipals = opts => async (req, done) => {
         const createMethodName = _.get(opts, ['domainDriverOptions', domain.type, 'createUser']);
         const createMethod = _.get(req.server.methods, createMethodName);
         if (!createMethod) done(Boom.preconditionFailed(`Server method ${createMethodName} not registered, conversion aborting.`));
-        return P.all(
-            _.map(req.pre.owners, async (v, k) => {
+        return P.each(Object.keys(req.pre.owners), async username => {
                 try {
-                    const user = await createMethod(k.toLowerCase(), domain);
-                    user.username = user.username.toLowerCase();
+                    const user = await createMethod(username, domain);
                     const [, created] = await User.findOrCreate({
                         where: {
-                            username: k.toLowerCase(),
+                            username: { ilike: username },
                             domain: req.payload.domain
                         },
                         defaults: user
                     });
-                    req.pre.monitor.progress({ primary: `${created ? 'Created' : 'Found'} user ${k} ` });
+                    req.pre.monitor.progress({ primary: `${created ? 'Created' : 'Found'} user ${username} ` });
                 } catch (e) {
                     console.log(e);
                 }
-            })).nodeify(done);
+            }).nodeify(done);
     }
     done();
 };
 
 const reassignOwners = (req, done) => {
     const sequelize = req.server.app.db.sequelize;
-    return P.all(_.map(req.pre.owners, async (v, k) => {
+    return P.each(Object.keys(req.pre.owners), async username => {
         try {
-
-            const res = await sequelize.query('update query set "ownerId" = :ownerId where "sourceId" in (:sourceIds)',
-                { replacements: { ownerId: k.toLowerCase(), sourceIds: v } }
+            const qr = await sequelize.query('select username from "user" where username ilike :username',
+                { replacements: { username: username.toUpperCase() } }
             );
-            req.pre.monitor.progress({ primary: `Reassigned ${res[0]} reports to ${k}` });
+            const realUsername = _.get(qr, [0, 0, 'username']);
+            if (realUsername) {
+                const res = await sequelize.query('update query set "ownerId" = :ownerId where "sourceId" in (:sourceIds)',
+                    { replacements: { ownerId: realUsername, sourceIds: req.pre.owners[username] } }
+                );
+                await req.pre.monitor.progress({ primary: `Reassigned ${res[0]} reports to ${realUsername}` });
+            } else {
+                await req.pre.monitor.progress({ primary: `User ${username} not found.` });
+            }
 
         } catch (e) {
             console.log(e);
         }
-    })).nodeify(done);
+    }).nodeify(done);
 };
 
 exports.register = function (server, opts, next) {
